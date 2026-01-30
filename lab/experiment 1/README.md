@@ -30,6 +30,8 @@ https://developer.hashicorp.com/vagrant/install
 Install Vagrant on the host machine.
 
 ![Download Vagrant](./images/image1.png)
+
+
 ![](./images/image2.png)
 
 ---
@@ -57,3 +59,74 @@ vagrant up
 ```
 ![vagrant up](./images/image5.png)
 
+### Step 6: Access the Virtual Machine using SSH
+
+```bash
+vagrant ssh
+```
+![vagrant ssh](./images/image6.png)
+
+### Step 7: Update Package Repository
+
+```bash
+sudo apt update
+```
+![update](./images/image7.png)
+
+### Step 8: Install Nginx Web Server inside VM
+
+```bash
+sudo apt install -y nginx
+```
+![install nginx](./images/image8.png)
+
+Start the Nginx service
+
+```bash
+sudo systemctl start nginx
+
+```
+![start nginx](./images/image9.png)
+
+### Step 9: Verify Nginx Installation
+
+```bash
+curl localhost
+```
+![verify nginx](./images/image10.png)
+
+---
+
+### Step 10: Observe Utilization Matrix in Running State
+
+![Running State Matrix](./images/image11.png)
+
+---
+
+### Step 11: Stop the Virtual Machine
+
+```bash
+vagrant halt
+```
+![halt vagrant](./images/image12.png)
+
+---
+
+### Step 12: Observe Utilization Matrix in Stopped State 
+
+![Stopped State Matrix](./images/image13.png)
+
+---
+
+### Step 13: Remove the Virtual Machine
+
+```bash
+vagrant destroy
+```
+![destroying vm](./images/image14.png)
+
+---
+
+### Verifying removal of VM
+
+![vm destroyed](./images/image15.png)
