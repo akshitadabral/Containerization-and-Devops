@@ -29,15 +29,31 @@ https://developer.hashicorp.com/vagrant/install
 
 Install Vagrant on the host machine.
 
-📸 Screenshot:  
 ![Download Vagrant](./images/image1.png)
 ![](./images/image2.png)
 
 ---
 
 ### Step 3: Verify Vagrant Installation 
+
 Open Command Prompt and execute:
 ```bash
-vagrant --version
-![](./images/image3.png)
+vagrant --version 
+```
+
+![version check](./images/image3.png)
+
+### Step 4: Initialize Vagrant with Ubuntu box
+
+```bash
+vagrant init hashicorp/bionic64
+```
+![initialize](./images/image4.png)
+
+### Step 5: Start the Ubuntu Virtual Machine
+
+```bash
+vagrant up
+```
+![vagrant up](./images/image5.png)
 
