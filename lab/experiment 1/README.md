@@ -1,22 +1,44 @@
-# Experiment: Creating Ubuntu Virtual Machine using Vagrant and Installing Nginx
+# Experiment 1: 
+# Comparison of Virtual Machines (VMs) and Containers using Ubuntu and Nginx
 
-## Aim
-To install VirtualBox and Vagrant on the host machine, create an Ubuntu virtual machine using Vagrant, install and verify the Nginx web server inside the virtual machine, observe system resource utilization in running and stopped states.
+## Objective :
+1. To understand the conceptual and practical differences between Virtual Machines and Containers.
 
----
+2. To install and configure a Virtual Machine using VirtualBox and Vagrant on Windows.
 
-## System Configuration
-- **Host Operating System**: Windows 
-- **Virtualization Software**: VirtualBox
-- **VM Management Tool**: Vagrant
-- **Guest Operating System**: Ubuntu (hashicorp/bionic64)
+3. To install and configure Containers using Docker inside WSL.
 
----
+4. To deploy an Ubuntu-based Nginx web server in both environments.
 
-## Step-by-Step Procedure
+5. To compare resource utilization, performance, and operational characteristics of VMs and Containers.
 
 ---
 
+## REQUIREMENTS :
+
+### HARDWARE :
+- 64-bit system with virtualization support enabled in BIOS
+
+- Minimum 8 GB RAM (4 GB minimum acceptable)
+
+- Internet connection
+---
+### SOFTWARE :
+
+- Oracle VirtualBox
+
+- Vagrant
+
+- Windows Subsystem for Linux (WSL 2)
+
+- Ubuntu (WSL distribution)
+
+- Docker Engine (docker.io)
+
+## PROCEDURE :
+
+---
+### EXPERIMENT PART A : Virtual Machine (Windows)
 ### Step 1: Download and Install VirtualBox 
 
 Download VirtualBox from:  
@@ -130,3 +152,74 @@ vagrant destroy
 ### Verifying removal of VM
 
 ![vm destroyed](./images/image15.png)
+
+---
+
+### EXPERIMENT PART B : Containers using WSL (Windows)
+
+### Step 1: Install WSL
+
+```bash
+wsl --install
+```
+### Step 2: Install Ubuntu on  WSL
+
+```bash
+wsl --install -d Ubuntu
+```
+### Step 3: Install Docker Engine inside WSL
+
+```bash
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+```
+![installing](./images/image16.png)
+![installing](./images/image17.png)
+
+### Step 4: Run Ubuntu Container with Nginx
+
+```bash
+docker pull ubuntu
+docker run -d -p 8080:80 --name nginx-container nginx
+```
+![running](./images/image18.png)
+![running](./images/image19.png)
+### Step 5: Verify Nginx in Container 
+
+```bash
+curl localhost:8080
+```
+![verifying](./images/image20.png)
+
+---
+
+### Step 6: Observe Utilization Matrix 
+
+```bash
+docker stats
+free -h
+```
+![observing](./images/image21.png)
+![observing](./images/image22.png)
+---
+## PARAMETERS TO COMPARE
+
+| Parameter        | Virtual Machine | Container   |
+|------------------|-----------------|-------------|
+| Boot Time        | High            | Very Low    |
+| RAM Usage        | High            | Low         |
+| CPU Overhead     | Higher          | Minimal     |
+| Disk Usage       | Larger          | Smaller     |
+| Isolation        | Strong          | Moderate    |
+
+---
+
+## RESULTS
+
+The experiment demonstrates that containers are significantly more lightweight and resource-efficient compared to virtual machines, while virtual machines provide stronger isolation and full OS-level abstraction.
+
+## CONCLUSION
+
+Virtual Machines are suitable for full OS isolation and legacy workloads, whereas Containers are ideal for microservices, rapid deployment, and efficient resource utilization.
