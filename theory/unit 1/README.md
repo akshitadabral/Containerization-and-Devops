@@ -190,3 +190,42 @@ curl --unix-socket /var/run/docker.sock \
   -X POST \
   http://localhost/v1.44/containers/mynginx/stop
 ```
+---
+## Expose Docker API in Linux/WSL(docker.io)
+
+1. Open Docker Daemon Configuration File
+```bash
+sudo nano/etc/docker/daemon.json
+```
+Add:
+```bash
+{
+  "hosts": [
+    "tcp://0.0.0.0:2375",
+    "unix:///var/run/docker.sock"
+  ]
+}
+```
+Save and Exit the File.
+
+2. Stop the Docker Daemon
+```bash
+sudo pkill dockerd
+```
+
+3. Start Docker Daemon Manually
+```bash
+sudo dockerd &sudo dockerd &
+```
+![](./images/image13.png)
+
+4. Verify Docker Is Listening on Port 2375
+```bash
+ss -lntp | grep 2375
+```
+
+5. Test Docker Remote API Using CURL
+```bash
+curl http://localhost:2375/containers/json
+```
+![](./images/image14.png)
