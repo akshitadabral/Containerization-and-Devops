@@ -1,4 +1,4 @@
-# Experiment 3: 
+# Experiment 3.1: 
 # Deploying NGINX Using Different Base Images and Comparing Image Layers
 ---
 ## Lab Objectives
@@ -191,3 +191,7 @@ nginx
 - Frontend for microservices
 - API gateway
 - Static file server
+
+---
+# Experiment 3.2: Flask Application – Docker 
+[README.md](./experiment3.2/README.md)
