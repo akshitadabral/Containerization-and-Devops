@@ -3,7 +3,7 @@
 ---
 ## Overview
 
-This project demonstrates a lightweight Python Flask web application that is tested locally before being containerized using Docker.
+This experiment demonstrates the development of a lightweight Python Flask web application, testing it locally, and then containerizing it using Docker.
 The application displays a simple message when accessed through a web browser.
 
 ## Lab Objectives
@@ -13,6 +13,8 @@ The application displays a simple message when accessed through a web browser.
 - To create and organize application files properly
 
 - To test the application locally before deploying it inside a Docker container
+
+- To build a custom Docker image and run the application inside a container
 
 ## Technologies Used
 
@@ -77,7 +79,6 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 After activation, the terminal prompt will change to:
-
 (venv)
 
 ---
@@ -110,11 +111,14 @@ python app.py
 
 
 ---
-Docker Containerization
-Step 9: Create Dockerfile
+
+## Docker Containerization
+
+**Step 9** : Create [Dockerfile](./flask-docker-demo/Dockerfile)
 
 Create a file named Dockerfile inside the project directory.
 
+```bash
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -128,38 +132,54 @@ COPY app.py .
 EXPOSE 5000
 
 CMD ["python", "app.py"]
-
-Step 10: Build Docker Image
+```
+---
+**Step 10** : Build Docker Image
 
 Use Docker to build a custom image from the Dockerfile.
 
-docker build -t flask-app .
-
-
+```bash
+docker build -t flask-docker-demo .
+```
 Verify the image creation:
 
+```bash
 docker images
+```
+![](./images/image5.png)
 
-Step 11: Run the Application Inside Docker Container
+---
+
+**Step 11** : Run the Application Inside Docker Container
 
 Launch the Flask application inside a Docker container.
+```bash
+docker run -p 5000:5000 flask-docker-demo
+```
+![](./images/image6.png)
 
-docker run -p 5000:5000 flask-app
+---
 
-Step 12: Test the Containerized Application
+**Step 12** : Test the Containerized Application
 
-Open a web browser
+- Open a web browser
 
-Visit:
+- Visit: http://localhost:5000
 
-http://localhost:5000
+- Output displayed: Hello, Docker!
 
-
-Output displayed:
-
-Hello, Docker!
-
+![](./images/image7.png)
 
 This confirms that the application is running successfully inside the Docker container.
 
-To stop the container, press:
+- To stop the container, press : CTRL + C
+
+## Result
+
+The Flask web application was successfully created, tested locally, containerized using Docker, and deployed inside a Docker container. The application worked correctly in both local and containerized environments.
+
+---
+
+## Conclusion
+
+This experiment demonstrates the importance of testing an application locally before Dockerization. Containerization using Docker ensures consistency, portability, and ease of deployment across different environments.

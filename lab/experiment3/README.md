@@ -11,12 +11,14 @@
 - Alpine-based image
 
 2. Understand Docker image layers and size differences
+
 3. Compare performance, security, and use-cases of each approach
 4. Explain real-world use of NGINX in containerized systems
 
 ## Prerequisites
 
 1. Docker installed and running
+
 2. Basic knowledge of:
 
 - docker run
@@ -65,7 +67,7 @@ docker images nginx
 
 # Part 2: Custom NGINX Using Ubuntu Base Image
 
-**Step 1**: Create Dockerfile
+**Step 1**: Create [Dockerfile](./Dockerfile)
 
 ```bash
 FROM ubuntu: 22.04
@@ -85,9 +87,9 @@ CMD ["nginx", "-g", "daemon off;"]
 docker build -t nginx-ubuntu .
 ```
 **Step 3**: Run Container
-
+```bash
 docker run -d -- name nginx-ubuntu -p 8081:80 nginx-ubuntu
-
+```
 ![](./images/image3.png)
 ## Observations
 
@@ -104,7 +106,7 @@ docker images nginx-ubuntu
 
 # Part 3: Custom NGINX Using Alpine Base Image
 
-**Step 1**: Create Dockerfile
+**Step 1**: Create [Dockerfile](./Dockerfiletwo)
 ```bash
 FROM alpine:latest
 
@@ -163,13 +165,13 @@ docker history nginx-alpine
 
 # Part 5: Functional Tasks Using NGINX
 
-##  Task 1: Serve Custom HTML Page
+##  Task 1: Serve [Custom HTML Page](./html/index.html)
 
 ```bash
 mkdir html
 echo "<h1>Hello from Docker NGINX</h1>" > html/index.html
 ```
-- Run:
+Run:
 ```bash
 docker run -d \
 -p 8083:80 \
