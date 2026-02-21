@@ -8,7 +8,9 @@ This repository contains lab and theory work for Containeriazation and Devops.
 
 **BATCH 1 (CCVT)**
 
-## LAB
+---
+
+# LAB
 1. [Experiment 1: Comparison of Virtual Machines (VMs) and Containers using Ubuntu and Nginx](./lab/experiment1/README.md)
 
 2. [Experiment 2: Docker Installation,Configuration, and Running Images](./lab/experiment2/README.md)
@@ -21,8 +23,8 @@ This repository contains lab and theory work for Containeriazation and Devops.
  
 4. [Experiment 4: Docker Essentials](./lab/experiment4/README.md)
 
-
-## THEORY
+---
+# THEORY
 
 1. Unit 1: [Progress](./theory/unit%201/README.md)
 2. Unit 2: [Progress](./theory/unit%202)
