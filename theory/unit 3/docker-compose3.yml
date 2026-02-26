@@ -1,0 +1,28 @@
+services:
+  myapp:
+    image: nginx:latest
+    container_name: myapp
+    hostname: app-server
+
+    ports:
+      - "8080:80"
+      - "8443:443"
+
+    volumes:
+      - ./config:/etc/app
+      - app-data:/var/lib/app
+
+    environment:
+      APP_ENV: production
+      DB_URL: postgres://user:pass@db:5432/app
+
+    networks:
+      - app-network
+
+    restart: always
+
+volumes:
+  app-data:
+
+networks:
+  app-network:
