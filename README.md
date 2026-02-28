@@ -31,3 +31,4 @@ This repository contains lab and theory work for Containeriazation and Devops.
 1. Unit 1: [Progress](./theory/unit%201/README.md)
 2. Unit 2: [Progress](./theory/unit%202)
 3. Unit 3: [Progress](./theory/unit%203/README.md)
+    - [Docker Swarm](./theory/unit%203/docker%20swarm/)
