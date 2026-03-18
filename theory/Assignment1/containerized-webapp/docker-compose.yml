@@ -24,6 +24,7 @@ services:
       interval: 10s
       retries: 5
 
+
   backend:
     build: ./backend
     container_name: node_backend
@@ -42,10 +43,7 @@ services:
     networks:
       macvlan_net:
         ipv4_address: 192.168.50.20
-      bridge_net: {}      # <- Added bridge network for host access
 
-    ports:
-      - "3000:3000"       # <- Expose backend to localhost
 
 volumes:
   pgdata:
@@ -53,5 +51,3 @@ volumes:
 networks:
   macvlan_net:
     external: true
-  bridge_net:            # <- Temporary bridge for host testing
-    driver: bridge

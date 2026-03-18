@@ -1,31 +1,30 @@
-## Assignment-1:- Containerized Web Application with PostgreSQL using Docker Compose and Macvlan/Ipvlan
+## Assignment 1: Containerized Web Application with PostgreSQL using Docker Compose and Macvlan
 
-<hr>
-
-<h4 align="center"> Pre-requisite </h4>
-
+### Pre-requisite 
+- Structure of the Repository
 ![Directory Structure](./containerized-webapp/images/projectstructure.png)
 
-<hr>
 
-**Step-1:- Initialize a Node Package**
+
+**Step 1: Initialize a Node Package**
 ```bash
 npm init -y
 ```
 
 
-**Step-2:- Install Necessary Package**
+**Step 2: Install Necessary Package**
 ```bash
 npm i express pg
 ```
 ![](./containerized-webapp/images/img1.png)
 
 
-**Step-3:- The `package.json` will look as follows:-**
+**Step-3:- The [`package.json`](./containerized-webapp/backend/package.json) will look as follows:-**
 ![package.json](./containerized-webapp/images/img2.png)
 
 
-**Step-4:- The `server.js` will look as follows:-**
+
+**Step-4:- The [`server.js`](./containerized-webapp/backend/src/server.js) will look as follows:-**
 ```js
 const express = require("express");
 const { Pool } = require("pg");
@@ -77,10 +76,9 @@ app.listen(3000, "0.0.0.0", () => {
   console.log("Server running on port 3000");
 });
 ```
-[server.js](./containerized-webapp/backend/src/server.js)
 
 
-**Step-5:- The backend/`Dockerfile` will look as follows:-**
+**Step 5:The [backend/Dockerfile](./containerized-webapp/backend/Dockerfile) contains the following**:
 ```Dockerfile
 # Builder Stage
 FROM node:20-alpine AS builder
@@ -108,10 +106,9 @@ EXPOSE 3000
 
 CMD ["node", "src/server.js"]
 ```
-[Dockerfile of backend](./containerized-webapp/backend/Dockerfile)
 
 
-**Step-6:- The `.dockerignore` will look as follows:-**
+**Step 6: The `.dockerignore`contains the following**
 ```bash
 node_modules
 npm-debug.log
@@ -121,7 +118,8 @@ Dockerfile
 ````
 
 
-**Step-7:- The database/`Dockerfile` will look as follows:-**
+**Step 7:The [database/dockerfile](./containerized-webapp/database/Dockerfile) contains the following**:
+
 ```Dockerfile
 FROM postgres:15-alpine
 
@@ -130,7 +128,7 @@ COPY init.sql /docker-entrypoint-initdb.d/
 
 
 
-**Step-8:- The `init.sql` will look as follows:-**
+**Step 8: The [init.sql](./containerized-webapp/database/init.sql) contains the following:**
 ```sql
 CREATE TABLE IF NOT EXISTS users(
     id SERIAL PRIMARY KEY,
@@ -140,7 +138,8 @@ CREATE TABLE IF NOT EXISTS users(
 
 
 
-**Step-9:- The `docker-compose.yml` will look as follows:-**
+**Step 9:The [docker compose](./containerized-webapp/docker-compose.yml) contains the following:**
+
 ```docker-compose
 version: "3.9"
 
@@ -179,6 +178,7 @@ services:
       POSTGRES_DB: mydb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: akshita
+
     depends_on:
       database:
         condition: service_healthy
@@ -195,17 +195,16 @@ networks:
   macvlan_net:
     external: true
 ```
-[docker-compose.yml](./containerized-webapp/docker-compose.yml)
 
 
-**Step-10:- Find your interface**
+
+**Step 10: Find your interface**
 ```bash
 ip a
 ```
+![](./containerized-webapp/images/ipa.png)
 
-
-
-**Step-11:- Create Network**
+**Step 11: Create Network**
 ```bash
 docker network create -d macvlan \
   --subnet=192.168.50.0/24 \
@@ -216,21 +215,24 @@ docker network create -d macvlan \
 ![Create Network](./containerized-webapp/images/networkcreation.png)
 
 
-**Step-12:- Build from Compose**
+**Step 12: Build from Compose**
+
 ```bash
 docker-compose build --no-cache
 ```
 ![Build Compose](./containerized-webapp/images/dockercompose.png)
 
 
-**Step-13:- Start Services**
+**Step 13: Start Services**
 ```bash
 docker-compose up -d
 ```
 ![Start Service](./containerized-webapp/images/composeup.png)
 
 
-**Step-14:- Insert A User in DB in API**
+**Step-14:- Insert A User in DB in API** 
+
+**- Used localhost due to limitation of wsl,explained below in deliverables**
 ```bash
 curl -X POST http://192.168.50.20:3000/users \
 -H "Content-Type: application/json" \
@@ -246,42 +248,42 @@ curl http://192.168.50.20:3000/users
 ![Get User API](./containerized-webapp/images/curl%20get.png)
 
 
-**Step-16:- List Running Container**
+**Step 16: List Running Container**
 ```bash
 docker ps
 ```
 ![List Containers](./containerized-webapp/images/inspect1.png)
 
 
-**Step-17:- List Volumes**
+**Step 17:  List Volumes**
 ```bash
 docker volume ls 
 ```
 ![List Volumes](./containerized-webapp/images/inspect2.png)
 
 
-**Step-18:- Inspect Network**
+**Step 18:  Inspect Network**
 ```bash
 docker network inspect macvlan_net
 ```
 ![Inspect Network](./containerized-webapp/images/macinspect.png)
 
 
-**Step-19:- Inspect Backend Container**
+**Step 19:  Inspect Backend Container**
 ```bash
 docker inspect node_backend
 ```
 ![Inspect Backend](./containerized-webapp/images/backendinspect.png)
 
 
-**Step-20:- Inspect DB**
+**Step 20:  Inspect DB**
 ```bash
 docker inspect postgres_db
 ```
 ![Inspect DB](./containerized-webapp/images/postgresinspect.png)
 
 
-**Step-21:- Verify Data Persistence**
+**Step 21:  Verify Data Persistence**
 This step will verify that data stored in DB is permanently saved irrespective of the state of the container.
 ```bash
 docker-compose down
@@ -292,13 +294,10 @@ curl http://192.168.50.20:3000/users
 
 
 
-<hr>
-
-<h4 align="center"> Report </h4>
-
-<hr>
-
-
+---
+# DELIVERABLES
+## 1. REPORT
+---
 1. **Build Optimization Explanation**
 
 Several techniques were applied during the Docker image build process to improve efficiency, security, and reduce the overall image size.
@@ -366,3 +365,53 @@ Both Macvlan and IPvlan are Docker network drivers that allow containers to comm
 | Best Use Case | Small deployments or environments requiring unique MAC addresses | Large-scale container deployments |
 
 Macvlan is useful when containers need to behave like **independent physical machines on the network**, while IPvlan is better suited for **large-scale deployments where network efficiency and scalability are important**.
+
+---
+### **REASON FOR USING LOCALHOST**
+Windows Subsystem for Linux (WSL) has limitations when working with macvlan networks in Docker. Macvlan requires direct Layer 2 network access to allow containers to behave like separate devices with unique IP addresses. However, WSL operates in a virtualized environment using Network Address Translation (NAT), which does not support this type of low-level network bridging. As a result, while container-to-container communication over macvlan works correctly, the host system is unable to directly communicate with containers using their macvlan IP addresses. This limitation is inherent to WSL’s networking design and not due to any configuration error in the macvlan setup.
+**1. Macvlan setup**
+![](./containerized-webapp/images/ss1.png)
+
+The IP addresses assigned to the containers confirm that the macvlan network is correctly configured with static IP allocation.
+
+**2. Container-to-Container communication works**
+![](./containerized-webapp/images/ss2.png)
+
+The successful ping results, with 0% packet loss, confirm that the backend container can communicate with the database container over the macvlan network.
+
+**3.Database is accessible**
+![](./containerized-webapp/images/ss3.png)
+The output shows that port 5432 on the database container is open, confirming that the PostgreSQL service is running and accessible from the backend container over the macvlan network.
+
+**4. WSL Limitation**
+![](./containerized-webapp/images/ss4.png)
+The ping request from the host system fails with 100% packet loss, indicating that the host cannot communicate with the container. This is due to a limitation of WSL, where macvlan networks do not support host-to-container communication because of network isolation and virtualization.
+
+---
+## 2. Separate Dockerfiles
+[Backend Dockerfile](./containerized-webapp/backend/Dockerfile)
+[Database Dockerfile](./containerized-webapp/database/Dockerfile)
+
+---
+## 3. Github Repository
+
+https://github.com/akshitadabral/Containerization-and-Devops/tree/main/theory/Assignment1
+
+---
+## 4. Docker Compose
+[docker-compose.yml](./containerized-webapp/docker-compose.yml)
+
+---
+## 5. Network Creation Command
+![](./containerized-webapp/images/networkcreation.png)
+
+---
+## 6. Screenshot Proofs
+- Container IP
+![](./containerized-webapp/images/containerip.png)
+
+- docker network inspect
+![](./containerized-webapp/images/macinspect.png)
+
+- volume persistent test
+![](./containerized-webapp/images/lastss.png)
