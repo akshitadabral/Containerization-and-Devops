@@ -140,8 +140,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 **Step 9:The [docker compose](./containerized-webapp/docker-compose.yml) contains the following:**
 
-```docker-compose
-version: "3.9"
+```version: "3.9"
 
 services:
 
@@ -186,6 +185,11 @@ services:
     networks:
       macvlan_net:
         ipv4_address: 192.168.50.20
+      bridge_net: {}
+    
+    ports:
+      - "3000:3000"
+
 
 
 volumes:
@@ -194,6 +198,8 @@ volumes:
 networks:
   macvlan_net:
     external: true
+  bridge_net:
+    driver: bridge
 ```
 
 
