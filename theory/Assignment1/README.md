@@ -211,6 +211,9 @@ ip a
 ![](./containerized-webapp/images/ipa.png)
 
 **Step 11: Create Network**
+
+Changed to ipvlan later in [docker-compose_ipvlan.yml](./containerized-webapp/docker-compose_ipvlan.yml)
+
 ```bash
 docker network create -d macvlan \
   --subnet=192.168.50.0/24 \
@@ -298,7 +301,161 @@ curl http://192.168.50.20:3000/users
 ```
 ![Restart Compose & Run API](./containerized-webapp/images/lastss.png)
 
+---
+## IPvlan Implementation (Alternative to Macvlan)
+### Reason for Switching to IPvlan
 
+While implementing the project using Macvlan, a limitation was observed in the WSL environment.
+
+Macvlan requires direct Layer 2 network access, but WSL operates on a virtualized NAT-based network. Due to this:
+
+Host system could not communicate with containers
+Accessing container IPs from browser was not possible
+Only container-to-container communication worked
+
+To overcome this limitation an IPvlan-based Docker Compose setup was created.
+
+**Step 1: [IPvlan-Based Docker Compose](./containerized-webapp/docker-compose_ipvlan.yml)**
+
+```bash
+services:
+
+  database:
+    build: ./database
+    container_name: postgres_db
+    restart: always
+
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: akshita
+
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+    networks:
+      ipvlan_net:
+        ipv4_address: 192.168.200.21
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+  backend:
+    build: ./backend
+    container_name: node_backend
+    restart: always
+
+    environment:
+      DB_HOST: 192.168.200.21
+      POSTGRES_DB: mydb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: akshita
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    networks:
+      ipvlan_net:
+        ipv4_address: 192.168.200.20
+      bridge_net:   
+
+    ports:
+      - "3000:3000"   
+
+
+volumes:
+  pgdata:
+
+
+networks:
+  ipvlan_net:
+    driver: ipvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.200.0/24
+          gateway: 192.168.200.1
+
+  bridge_net:
+    driver: bridge
+```
+
+**Step 2 : Running the IPvlan Setup**
+```bash
+docker-compose -f docker-compose_ipvlan.yml up -d --build
+```
+![](./containerized-webapp/images/ipvlancompose.png)
+
+**Step 3 : Network Verification**
+```bash
+docker network inspect containerized-webapp_ipvlan_net
+```
+![](./containerized-webapp/images/ipvlaninspect.png)
+
+**Step 4 : API Testing Using IPvlan**
+
+Since direct browser access to IPvlan IP is restricted in WSL, a temporary curl container was used to test APIs within the network.
+
+1. **Insert data (POST)**
+```bash 
+docker run --rm --network containerized-webapp_ipvlan_net curlimages/curl \
+-X POST http://192.168.200.20:3000/users \
+-H "Content-Type: application/json" \
+-d '{"name":"Akshita"}'
+```
+![](./containerized-webapp/images/ipcurl.png)
+
+2. **Fetch Data**
+```bash 
+docker run --rm --network containerized-webapp_ipvlan_net curlimages/curl \
+http://192.168.200.20:3000/users
+```
+![](./containerized-webapp/images/ipfetch.png)
+
+**Step 5: API Access via Localhost**
+
+In addition to testing APIs using the IPvlan network, the backend service can also be accessed directly from the host system using localhost due to port mapping and the bridge network.
+
+1. Insert Data (POST using localhost)
+```
+curl -X POST http://localhost:3000/users \
+-H "Content-Type: application/json" \
+-d '{"name":"Akshita"}'
+```
+2. Fetch Data (GET using localhost)
+```
+curl http://localhost:3000/users
+```
+**Access via Browser**
+
+To enable browser access, a bridge network with port mapping was added.
+1. **GET**
+```
+http://localhost:3000/users
+```
+![](./containerized-webapp/images/serveruser.png)
+
+2. **Health Check**
+```
+http://localhost:3000/users
+```
+![](./containerized-webapp/images/serverhealthy.png)
+
+## **Verifying Data Persistence in IPvlan Setup**
+This step verifies that data stored in the PostgreSQL database remains intact even after restarting the containers.
+
+```bash
+docker-compose -f docker-compose_ipvlan.yml down
+docker-compose -f docker-compose_ipvlan.yml up -d
+curl http://localhost:3000/users
+```
+![](./containerized-webapp/images/ippersistence.png)
 
 ---
 # DELIVERABLES
@@ -320,8 +477,6 @@ were excluded. This reduces the amount of data transferred during the Docker bui
 Lastly, the container is configured to run under a non-root user account. Running containers as root can pose security risks if the application is compromised. By creating and using a non-root user inside the container, the application follows better security practices and reduces the potential impact of vulnerabilities.
 These optimizations together result in a secure, lightweight, and production-ready container image.
 
-
-<br>
 
 2. **Network Design Diagram**
 
