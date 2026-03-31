@@ -1,7 +1,8 @@
-## Assignment 1: Containerized Web Application with PostgreSQL using Docker Compose and Macvlan
+## Assignment 1: Containerized Web Application with PostgreSQL using Docker Compose and Macvlan/Ipvlan
 
 ### Pre-requisite 
 - Structure of the Repository
+
 ![Directory Structure](./containerized-webapp/images/projectstructure.png)
 
 
@@ -140,6 +141,8 @@ CREATE TABLE IF NOT EXISTS users(
 
 **Step 9:The [docker compose](./containerized-webapp/docker-compose.yml) contains the following:**
 
+([Ipvlan network](./containerized-webapp/docker-compose_ipvlan.yml) creates  network in the compose itself )
+
 ```version: "3.9"
 
 services:
@@ -239,7 +242,7 @@ docker-compose up -d
 ![Start Service](./containerized-webapp/images/composeup.png)
 
 
-**Step-14:- Insert A User in DB in API** 
+**Step 14 : Insert A User in DB in API** 
 
 **- Used localhost due to limitation of wsl,explained below in deliverables**
 ```bash
@@ -250,7 +253,7 @@ curl -X POST http://192.168.50.20:3000/users \
 ![Insert User](./containerized-webapp/images/curlpost.png)
 
 
-**Step-15:- GET User API**
+**Step 15: GET User API**
 ```bash
 curl http://192.168.50.20:3000/users
 ```
@@ -422,13 +425,13 @@ http://192.168.200.20:3000/users
 
 In addition to testing APIs using the IPvlan network, the backend service can also be accessed directly from the host system using localhost due to port mapping and the bridge network.
 
-1. Insert Data (POST using localhost)
+1. **Insert Data (POST using localhost)**
 ```
 curl -X POST http://localhost:3000/users \
 -H "Content-Type: application/json" \
 -d '{"name":"Akshita"}'
 ```
-2. Fetch Data (GET using localhost)
+2. **Fetch Data (GET using localhost)**
 ```
 curl http://localhost:3000/users
 ```
@@ -447,7 +450,10 @@ http://localhost:3000/users
 ```
 ![](./containerized-webapp/images/serverhealthy.png)
 
-## **Verifying Data Persistence in IPvlan Setup**
+---
+
+### **Verifying Data Persistence in IPvlan Setup**
+
 This step verifies that data stored in the PostgreSQL database remains intact even after restarting the containers.
 
 ```bash
@@ -459,6 +465,7 @@ curl http://localhost:3000/users
 
 ---
 # DELIVERABLES
+
 ## 1. REPORT
 ---
 1. **Build Optimization Explanation**
@@ -468,32 +475,48 @@ To begin with, the backend Dockerfile uses a multi-stage build strategy. In this
 Another optimization was the use of a lightweight base image. Instead of using the standard Node.js image, the project uses the node:20-alpine base image. Alpine Linux is specifically designed to be minimal and lightweight. Using this image helps reduce the overall container size and improves the container startup speed. Smaller images also reduce the time required to download images during deployment.
 Additionally, a .dockerignore file was configured to prevent unnecessary files from being sent to the Docker build context. Files and directories such as:
 - node_modules
-- .git
-- logs
-- temporary files
+- npm-debug.log
+- Dockerfile
 
-
-were excluded. This reduces the amount of data transferred during the Docker build process, which speeds up the build and keeps the image clean.
+were excluded. 
+This reduces the amount of data transferred during the Docker build process, which speeds up the build and keeps the image clean.
 Lastly, the container is configured to run under a non-root user account. Running containers as root can pose security risks if the application is compromised. By creating and using a non-root user inside the container, the application follows better security practices and reduces the potential impact of vulnerabilities.
 These optimizations together result in a secure, lightweight, and production-ready container image.
 
 
 2. **Network Design Diagram**
 
-![Network Diagram](./containerized-webapp/images/networkdiagram.png)
+**MACVLAN**
+![Network Diagram](./containerized-webapp/images/networkmacvlan.png)
+
 
 The project uses Macvlan networking to allow containers to appear as independent devices on the local area network (LAN). In this setup, each container is assigned a static IP address within the network subnet.
 The architecture consists of three major components:
-Client (Browser/Postman) – Sends HTTP requests to the backend API.
+
+- Client (Browser/Postman) : Sends HTTP requests to the backend API.
 
 
-Backend Container (Node.js + Express) – Processes requests and communicates with the database.
+- Backend Container (Node.js + Express) : Processes requests and communicates with the database.
 
 
-PostgreSQL Container – Stores application data using a persistent volume.
+- PostgreSQL Container : Stores application data using a persistent volume.
 
 
 Both containers are connected to an external Macvlan network, allowing them to communicate with each other using static IP addresses and also making them accessible from other devices on the LAN.
+
+
+**IPVLAN**
+![](./containerized-webapp/images/networkipvlan.png)
+
+Similarly, the project is extended using IPvlan networking as an alternative to Macvlan to overcome its host communication limitations. In this setup, containers share the same MAC address as the parent interface but are assigned unique IP addresses within the subnet. This allows more efficient network utilization and better compatibility with certain environments like WSL or restricted virtualized systems.
+
+The architecture remains the same in terms of components:
+
+- Client (Browser/Postman) : Sends HTTP requests to the backend API.
+- Backend Container (Node.js + Express) : Handles incoming requests and interacts with the database.
+- PostgreSQL Container : Stores and manages persistent application data using volumes.
+
+With IPvlan, the backend service can be accessed via localhost (using port mapping) as well as through the container’s assigned IP address within the subnet.
 
 3.**Image Size Comparison**
 
@@ -530,6 +553,7 @@ Macvlan is useful when containers need to behave like **independent physical mac
 ---
 ### **REASON FOR USING LOCALHOST**
 Windows Subsystem for Linux (WSL) has limitations when working with macvlan networks in Docker. Macvlan requires direct Layer 2 network access to allow containers to behave like separate devices with unique IP addresses. However, WSL operates in a virtualized environment using Network Address Translation (NAT), which does not support this type of low-level network bridging. As a result, while container-to-container communication over macvlan works correctly, the host system is unable to directly communicate with containers using their macvlan IP addresses. This limitation is inherent to WSL’s networking design and not due to any configuration error in the macvlan setup.
+
 **1. Macvlan setup**
 ![](./containerized-webapp/images/ss1.png)
 
@@ -551,6 +575,7 @@ The ping request from the host system fails with 100% packet loss, indicating th
 ---
 ## 2. Separate Dockerfiles
 [Backend Dockerfile](./containerized-webapp/backend/Dockerfile)
+
 [Database Dockerfile](./containerized-webapp/database/Dockerfile)
 
 ---
@@ -574,5 +599,8 @@ https://github.com/akshitadabral/Containerization-and-Devops/tree/main/theory/As
 - docker network inspect
 ![](./containerized-webapp/images/macinspect.png)
 
-- volume persistent test
+- volume persistent test (when macvlan was used)
 ![](./containerized-webapp/images/lastss.png)
+
+- volume persistent test (ipvlan)
+![](./containerized-webapp/images/ippersistence.png)
