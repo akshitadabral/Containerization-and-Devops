@@ -7,12 +7,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Source') {
-            steps {
-                git branch: 'main', url: 'https://github.com/akshitadabral/my-app.git'
-            }
-        }
-
         stage('Check Docker') {
             steps {
                 sh 'docker --version'
@@ -41,4 +35,5 @@ pipeline {
             }
         }
     }
+
 }
