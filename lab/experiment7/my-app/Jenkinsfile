@@ -15,7 +15,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
+                dir('lab/experiment7/my-app') {
+                    sh 'docker build -t $IMAGE_NAME:latest .'
+                }
             }
         }
 
@@ -35,5 +37,4 @@ pipeline {
             }
         }
     }
-
 }
