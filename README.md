@@ -25,6 +25,8 @@ This repository contains lab and theory work for Containeriazation and Devops.
 
 5. [Experiment 5: Docker - Volumes, Environment Variables,Monitoring & Networks](./lab/experiment5/README.md)
 
+7. [Experiment 7: CI/CD using Jenkins, GitHub and Docker Hub](./lab/experiment7/my-app/README.md)
+
 ---
 # THEORY
 
