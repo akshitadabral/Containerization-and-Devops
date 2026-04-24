@@ -30,6 +30,7 @@ This repository contains lab and theory work for Containeriazation and Devops.
 7. [Experiment 7: CI/CD using Jenkins, GitHub and Docker Hub](./lab/experiment7/my-app/README.md)
 
 8. [Experiment 9:  Ansible](./lab/experiment9/README.md)
+9. [Experiment 10: SonarQube - Static Code Analysis](./lab/experiment10/README.md)
 ---
 # THEORY
 
