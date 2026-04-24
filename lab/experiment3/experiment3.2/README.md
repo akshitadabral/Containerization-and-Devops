@@ -4,6 +4,7 @@
 ## Overview
 
 This experiment demonstrates the development of a lightweight Python Flask web application, testing it locally, and then containerizing it using Docker.
+
 The application displays a simple message when accessed through a web browser.
 
 ## Lab Objectives
@@ -29,7 +30,7 @@ The application displays a simple message when accessed through a web browser.
 ---
 
 ## STEPS
-**Step 1** : Create [Project Directory](./flask-docker-demo/) and move into it.
+ **Step 1 : Create [Project Directory](./flask-docker-demo/) and move into it.**
 
 ```bash
 mkdir flask-docker-demo
@@ -39,7 +40,9 @@ cd flask-docker-demo
 
 ---
 
-**Step 2** : Create a Python file named [app.py](./flask-docker-demo/app.py)
+**Step 2 : Create a Python file named [app.py](./flask-docker-demo/app.py)**
+
+A simple Flask application was developed to handle HTTP requests and display a basic message in the browser.
 ```bash
 from flask import Flask
 
@@ -57,8 +60,9 @@ Save and exit.
 
 ---
 
-**Step 3** : Create [Requirements File](./flask-docker-demo/requirements.txt)
+**Step 3 : Create [Requirements File](./flask-docker-demo/requirements.txt)**
 
+A file was created to list dependencies, ensuring easy installation both locally and inside the container.
 Add:
 ```bash
 flask
@@ -68,13 +72,17 @@ Save and exit.
 
 ---
 
-**Step 4**: Create Virtual Environment
+**Step 4: Create Virtual Environment**
+
+A virtual environment was created and activated to isolate project dependencies and avoid conflicts with system-level packages.
 ```bash
 python3 -m venv venv
 ```
 ---
 
-**Step 5** : Activate Virtual Environment
+**Step 5 : Activate Virtual Environment**
+
+The required libraries were installed using the requirements file so that the application can run properly.
 ```bash
 source venv/bin/activate
 ```
@@ -83,7 +91,9 @@ After activation, the terminal prompt will change to:
 
 ---
 
-**Step 6** : Install Required Dependencies
+**Step 6 : Install Required Dependencies**
+
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -91,7 +101,9 @@ pip install -r requirements.txt
 
 ---
 
-**Step 7** : Run the Flask Application
+**Step 7 : Run the Flask Application**
+
+The application was executed locally to verify its correctness before containerization.
 ```bash
 python app.py
 ```
@@ -99,7 +111,7 @@ python app.py
 
 ---
 
-**Step 8** : Verify the Output
+**Step 8 : Verify the Output**
 
 - Open a web browser
 
@@ -114,9 +126,9 @@ python app.py
 
 ## Docker Containerization
 
-**Step 9** : Create [Dockerfile](./flask-docker-demo/Dockerfile)
+**Step 9 : Create [Dockerfile](./flask-docker-demo/Dockerfile)**
 
-Create a file named Dockerfile inside the project directory.
+A Dockerfile was created to define the environment and automate the application setup inside a container. It specifies the base image, installs dependencies, copies application files, and defines the execution command.
 
 ```bash
 FROM python:3.12-slim
@@ -134,7 +146,7 @@ EXPOSE 5000
 CMD ["python", "app.py"]
 ```
 ---
-**Step 10** : Build Docker Image
+**Step 10 : Build Docker Image**
 
 Use Docker to build a custom image from the Dockerfile.
 
@@ -150,7 +162,7 @@ docker images
 
 ---
 
-**Step 11** : Run the Application Inside Docker Container
+**Step 11 : Run the Application Inside Docker Container**
 
 Launch the Flask application inside a Docker container.
 ```bash
@@ -160,7 +172,7 @@ docker run -p 5000:5000 flask-docker-demo
 
 ---
 
-**Step 12** : Test the Containerized Application
+**Step 12 : Test the Containerized Application**
 
 - Open a web browser
 

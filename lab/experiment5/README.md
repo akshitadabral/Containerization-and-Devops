@@ -1,5 +1,9 @@
 # Experiment 5: Docker - Volumes, Environment Variables,Monitoring & Networks
+---
+## Objective
 
+To understand advanced Docker concepts including data persistence using volumes, configuration using environment variables, container monitoring, and communication using Docker networks.
+---
 ## Part 1: Docker Volumes - Persistent Data Storage
 
 ### Lab 1: Understanding Data Persistence
@@ -22,8 +26,11 @@ exit
 docker start test-container
 docker exec test-container cat /data/message.txt
 ```
-ERROR: File doesn't exist! Data was lost.
-**Solution** Docker 
+**ERROR :** File doesn't exist! Data was lost.
+
+The file is not found after restart, showing that container storage does not persist beyond its lifecycle.
+
+**Solution :**  Docker 
 
 ![](./images/image1.png)
 
@@ -33,15 +40,17 @@ ERROR: File doesn't exist! Data was lost.
 
 #### 1. Anonymous Volumes
 
-- Create anonymous volume 
+- Create **Anonymous Volume**
 ```bash
 docker run -d -v /app/data -- name web1 nginx
 ```
+Docker automatically creates a volume with a random name and attaches it to the container.
+
 - Check volume
 ```bash
 docker volume ls
 ```
-Shows: anonymous volume with random hash
+**Shows:** anonymous volume with random hash
 
 - Inspect container to see volume mount
 ```bash
@@ -51,7 +60,7 @@ docker inspect web1 | grep -A 5 Mounts
 
 #### 2. Named Volumes
 
-- Create named volume
+- Create **Named Volume**
 
 ```bash
 docker volume create mydata
@@ -66,12 +75,13 @@ docker run -d -v mydata:/app/data -- name web2 nginx
 ```bash
 docker volume ls
 ```
- Shows: mydata
+ **Shows:** mydata
 
 - Inspect volume
 ```bash
 docker volume inspect mydata
 ```
+Using a named volume allows explicit control and reuse of stored data across containers.
 
 ![](./images/image3.png)
 
@@ -94,7 +104,9 @@ echo "From Host" > ~/myapp-data/host-file.txt
 ```bash
 docker exec web3 cat /app/data/host-file.txt
 ```
- Shows: From Host
+**Shows:** From Host
+
+The container directly accesses files from the host system, making it suitable for development and configuration sharing.
 
 ![](./images/image4.png)
 
@@ -102,7 +114,7 @@ docker exec web3 cat /app/data/host-file.txt
 ### Lab 3: Practical Volume Examples
 
 **1. Example 1: Database with Persistent Storage**
-- MySQL with named volume
+- **MySQL with named volume**
 ```bash
 docker run -d \
   --name mysql-db \
@@ -113,12 +125,15 @@ docker run -d \
 
 ![](./images/image5.png)
 
-- Check data persists
+- **Check data persists**
+
+Stop and remove the container, then start a new one with the same volume:
+
 ```bash
 docker stop mysql-db
 docker rm mysql-db
 ```
-- New container with same volume
+- **New container with same volume**
 ```bash
 docker run -d \
   --name new-mysql \
@@ -126,15 +141,17 @@ docker run -d \
   -e MYSQL_ROOT_PASSWORD=secret \
   mysql:8.0
   ```
-Data is preserved! 
+**Data is preserved!**
 ![](./images/image6.png)
 
-**Example 2:** Web App with Configuration Files
-- Create config directory
+---
+
+**Example 2: Web App with Configuration Files**
+- **Create config directory**
 ```bash
 mkdir ~/nginx-config
 ```
-- Create nginx config file
+- C**reate nginx config file**
 ```bash
 echo 'server {
     listen 80;
@@ -145,7 +162,7 @@ echo 'server {
 }' > ~/nginx-config/nginx.conf
 ```
 
-- Run nginx with config bind mount
+- **Run nginx with config bind mount**
 ```bash
 docker run -d \
   --name nginx-custom \
@@ -153,7 +170,7 @@ docker run -d \
   -v ~/nginx-config/nginx.conf:/etc/nginx/conf.d/default.conf \
   nginx
 ```
-- Test
+- **Test**
 ```bash
 curl http://localhost:8080
 ```
@@ -180,6 +197,8 @@ docker volume rm volume-name
 # Copy files to/from volume
 docker cp local-file.txt container-name:/path/in/volume
 ```
+These commands help manage storage resources efficiently.
+
 ![](./images/image8.png)
 
 ---
@@ -187,34 +206,37 @@ docker cp local-file.txt container-name:/path/in/volume
 ### Part 2: Environment Variables
 
 ### Lab 1: Setting Environment Variables
-
+Run container with environment variables:
 **1.Method 1: Using -e flag**
 
-- Single variable
+- **Single variable**
+```
 docker run -d \
   --name app1 \
   -e DATABASE_URL="postgres://user:pass@db:5432/mydb" \
   -e DEBUG="true" \
   -p 3000:3000 \
   my-node-app
-
-- Multiple variables
+```
+- **Multiple variables**
+```
 docker run -d \
   -e VAR1=value1 \
   -e VAR2=value2 \
   -e VAR3=value3 \
   my-app
+  ```
 ![](./images/image9.png)
 
 **2. Method 2: Using -- env-file**
 
-- Create .env file
+- **Create .env file**
 ```bash
 echo "DATABASE_HOST=localhost" >
 echo "DATABASE_PORT=5432" >> .env
 echo "API_KEY=secret123" >> .env
 ```
-- Use env file
+- **Use env file**
 ```bash
 docker run -d \
 -- env-file .env \
@@ -223,7 +245,7 @@ my-app
 ```
 ![](./images/image10.png)
 
-- Use multiple env files
+- **Use multiple env files**
 ```bash
 docker run -d \
 -- env-file .env \
@@ -271,6 +293,8 @@ docker exec flask-app printenv DATABASE_HOST
 ```bash
 curl http://localhost:5000/config
 ```
+The output confirms that values are correctly injected into the application.
+
 ![](./images/image12.png)
 
 ---
@@ -279,7 +303,9 @@ curl http://localhost:5000/config
 ### Lab 1: Basic Monitoring Commands
 
 
-**docker stats** - Real-time Container Metrics
+- **docker stats** : Real-time Container Metrics
+
+Provides real-time insights into CPU, memory, and network usage.
 ```bash
 # Live stats for all containers
 docker stats
@@ -313,7 +339,10 @@ docker stats --no-stream --no-trunc
 ---
 ### Lab 2:
 
-**docker top**- Process Monitoring
+- **docker top**: Process Monitoring
+
+Displays running processes inside the container.
+
 ```bash
 # View processes in container
 docker top container-name
@@ -329,7 +358,10 @@ ps aux | grep docker
 
 ## Lab 3:
 
-**docker logs**- Application Logs
+- **docker logs**: Application Logs
+
+Helps track application behavior and debug issues.
+
 ```bash
 # View logs
 docker logs container-name
@@ -354,6 +386,8 @@ docker logs -f --tail 50 -t container-name
 
 ## Lab 4: Container Inspection
 
+Provides detailed container configuration and runtime information.
+
 - Detailed container info
 ```bash
 docker inspect container-name
@@ -373,6 +407,8 @@ docker inspect -- format='{{ .HostConfig. NanoCpus}}' container-name
 ![](./images/image18.png)
 ---
 ### Lab 5: Events Monitoring
+
+Tracks system-level Docker activities in real time.
 
 - Monitor Docker events in real-time
 ```bash
@@ -396,6 +432,9 @@ docker events -- format'{{. Type}} { { .Action}} { { .Actor.Attributes. name} }'
 ---
 
 ### Lab 6: Practical Monitoring Script
+
+A shell script was used to display container status, resource usage, recent events, and system information in a structured format, enabling quick monitoring.
+
 ```bash
 #!/bin/bash
 # monitor.sh - Simple Docker monitoring
@@ -429,6 +468,8 @@ docker system df
 ```bash
 docker network ls
 ```
+Displays available network types such as bridge, host, and none.
+
 ![](./images/image20.png)
 ---
 ### Lab 2: Network Types Explained
@@ -446,14 +487,22 @@ docker run -d --name web2 --network my-network nginx
 # Containers can communicate using container names
 docker exec web1 curl http://web2
 ```
+Containers communicate using names within the same network.
+
 ![](./images/image21.png)
 2. Host Network
+
+The container shares the host’s network stack.
+
 ```bash
 docker run -d --name host-app --network host nginx
 ```
 
 ![](./images/image22.png)
 3. None Network
+
+The container runs without network connectivity.
+
 ```bash
 docker run -d --name isolated-app --network none alpine sleep 3600
 ```
@@ -481,6 +530,8 @@ docker network rm network-name
 # Prune unused networks
 docker network prune
 ```
+Enables flexible control over container communication.
+
 ![](./images/image25.png)
 ---
 ### Lab 4: Multi-Container Application Example
@@ -527,6 +578,7 @@ docker exec container-name curl -I http://another-container
 # View network ports
 docker port container-name
 ```
+
 ![](./images/image27.png)
 ---
 ### Lab 6: Port Publishing vs Exposing
@@ -627,3 +679,16 @@ docker network inspect myapp-network
 ```
 ![](./images/image32.png)
 ![](./images/image33.png)
+
+---
+## RESULT
+
+Successfully implement Docker volumes for persistent storage, configure containers using environment variables, monitor container performance, and establish communication using Docker networks.
+
+---
+
+## CONCLUSION
+
+The experiment demonstrates how Docker supports real-world application deployment through persistent storage, flexible configuration, monitoring tools, and network communication. 
+
+These features enable scalable, efficient, and maintainable containerized systems.

@@ -282,3 +282,28 @@ Jenkins console output showing pipeline stages:
 **akshitadabral/myapp** image pushed to Docker Hub:
 
 ![](./images/img17(verification).png)
+
+---
+## OBSERVATIONS
+- Jenkins simplifies CI/CD through a graphical interface and automation pipelines
+- GitHub acts as both code repository and trigger source
+- Docker ensures consistent application packaging
+- Webhooks enable real-time automation
+- Secure credential management prevents exposure of sensitive data
+
+---
+ 
+## RESULT
+
+A complete CI/CD pipeline was successfully implemented where:
+
+- Source code is managed in GitHub
+- Jenkins automatically detects changes
+- Docker image is built using the Dockerfile
+- Image is securely pushed to Docker Hub
+
+---
+
+## CONCLUSION
+
+This experiment demonstrated how CI/CD pipelines can automate software delivery using Jenkins, GitHub, and Docker. It highlights the importance of automation, reproducibility, and secure configuration in modern DevOps practices. The integration of these tools ensures faster development cycles and reliable deployment processes.

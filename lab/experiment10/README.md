@@ -4,6 +4,41 @@
 To perform static code analysis using SonarQube and identify bugs, vulnerabilities, and code smells in a Java application.
 
 ---
+
+## Theory
+
+**What is SonarQube?**
+
+SonarQube is an open-source platform used for static code analysis, which scans source code without executing it. It detects:
+
+- Bugs (runtime errors)
+- Vulnerabilities (security risks)
+- Code smells (poor coding practices)
+
+**Why is it needed?**
+
+Manual code review is:
+
+- Slow
+- Inconsistent
+- Not scalable
+
+**SonarQube solves this by:**
+
+- Automatically scanning code on every build
+- Providing a visual dashboard
+- Enforcing Quality Gates
+- Tracking technical debt
+
+**Key Concepts**
+- Bug → Code that may fail at runtime
+- Vulnerability → Security issue
+- Code Smell → Poor maintainability
+- Quality Gate → Pass/fail condition for code quality
+- Technical Debt → Time required to fix issues
+
+---
+
 ## Prerequisites
 **Install Maven**
 ```
@@ -104,6 +139,14 @@ Click Generate and **SAVE TOKEN**.
 ![](./images/img5.png)
 
 ### **3. Create Java Project**
+
+A sample Java project was created with intentional issues:
+
+- Division by zero (bug)
+- SQL injection risk (vulnerability)
+- Unused variables (code smell)
+- Duplicate methods
+- Null pointer risk
 ```
 mkdir -p sample-java-app/src/main/java/com/example
 cd sample-java-app
@@ -168,6 +211,12 @@ nano [pom.xml](./sample-java-app/pom.xml)
 
 ### **4. Run Sonar Scanner**
 
+This step:
+
+- Compiled code
+- Scanned for issues
+- Sent report to SonarQube server
+
 - **Inside project folder:**
 ```
 mvn sonar:sonar -Dsonar.login=YOUR_TOKEN
@@ -186,6 +235,13 @@ http://localhost:9000
 ![](./images/img8.png)
 ![](./images/img10.png)
 
+- **Observed:**
+
+- Bugs detected
+- Vulnerabilities identified
+- Code smells highlighted
+- Quality Gate status (Failed/Passed)
+- Technical debt estimation
 ---
 
 ### **6. Check API**
@@ -203,4 +259,18 @@ curl -u YOUR_TOKEN: \
 docker-compose down
 ```
 ![](./images/img11.png)
+
 ---
+
+## Observations
+- SonarQube successfully detected multiple issues in the code
+- Dashboard provided detailed visualization of problems
+- Quality Gate failed due to detected issues
+- Token-based authentication ensured secure communication
+= Static analysis helped identify problems before execution
+
+---
+ 
+## Result
+
+Successfully performed static code analysis using SonarQube, and identified bugs, vulnerabilities, and code smells in the Java application.

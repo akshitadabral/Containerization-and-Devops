@@ -1,5 +1,5 @@
 # Experiment 3.1: 
-# Deploying NGINX Using Different Base Images and Comparing Image Layers
+##  Deploying NGINX Using Different Base Images and Comparing Image Layers
 ---
 ## Lab Objectives
 
@@ -15,7 +15,7 @@
 3. Compare performance, security, and use-cases of each approach
 4. Explain real-world use of NGINX in containerized systems
 
-## Prerequisites
+### Prerequisites
 
 1. Docker installed and running
 
@@ -31,7 +31,7 @@
 
 ---
 
-# Part 1: Deploy NGINX Using Official Image (Recommended Approach)
+## Part 1: Deploy NGINX Using Official Image (Recommended Approach)
 
 **Step 1**: Pull the Image
 ```bash
@@ -51,21 +51,23 @@ You should see the NGINX welcome page.
 ![](./images/image1.png)
 
 ---
-## Key Observations
+## Observations
 
 ```bash
 docker images nginx
 ```
 
-- Image is pre-optimized
--  Minimal configuration required
--  Uses Debian-based OS internally
+- The container starts quickly with minimal setup
+- The image is pre-configured and optimized for production use
+- It internally uses a Debian-based system
+- Suitable for immediate deployment without customization
+
 ![](./images/image2.png)
 
 ---
 
 
-# Part 2: Custom NGINX Using Ubuntu Base Image
+## Part 2: Custom NGINX Using Ubuntu Base Image
 
 **Step 1**: Create [Dockerfile](./Dockerfile)
 
@@ -96,15 +98,16 @@ docker run -d -- name nginx-ubuntu -p 8081:80 nginx-ubuntu
 ```bash
 docker images nginx-ubuntu
 ```
--  Much larger image size
-- More layers
-- Full OS utilities available
+- Larger image size due to full Ubuntu OS
+- More layers are created during the build process
+- Provides extensive debugging tools and flexibility
+- Slower to build and start compared to other images
 
 ![](./images/image4.png)
 
 ---
 
-# Part 3: Custom NGINX Using Alpine Base Image
+## Part 3: Custom NGINX Using Alpine Base Image
 
 **Step 1**: Create [Dockerfile](./Dockerfiletwo)
 ```bash
@@ -131,15 +134,15 @@ docker run -d -- name nginx-alpine -p 8082:80 nginx-alpine
 ```bash
 docker images nginx-alpine
 ```
-- Extremely small image
-- Fewer packages
-- Faster pull and startup time
+- Very small image size
+- Minimal packages included
+- Faster image pull and container startup
 
 ![](./images/image5.png)
 
 ---
 
-# Part 4: Image Size and Layer Comparison
+## Part 4: Image Size and Layer Comparison
 
 - Compare Sizes
 
@@ -156,16 +159,18 @@ docker history nginx-alpine
 ```
 ## Observations:
 
-- Ubuntu has many filesystem layers
-- Alpine has minimal layers
-- Official NGINX image is optimized but heavier than Alpine
+- Ubuntu-based image has the largest size and maximum layers
+- Alpine-based image has the smallest size and minimal layers
+- Official NGINX image is optimized but moderately sized
+- Fewer layers result in better efficiency and faster execution
+
 ![](./images/image7.png)
 
 --- 
 
-# Part 5: Functional Tasks Using NGINX
+## Part 5: Functional Tasks Using NGINX
 
-##  Task 1: Serve [Custom HTML Page](./html/index.html)
+##  Task 1: Server [Custom HTML Page](./html/index.html)
 
 ```bash
 mkdir html
@@ -195,5 +200,12 @@ nginx
 - Static file server
 
 ---
+
+## CONCLUSION
+This experiment highlights the importance of selecting an appropriate base image in Docker. The official NGINX image provides a reliable and production-ready solution with minimal effort. Ubuntu-based images offer flexibility but are resource-intensive and less efficient. Alpine-based images, being lightweight and secure, are ideal for modern cloud-native applications and microservices. Therefore, the choice of base image should be based on the specific requirements of performance, security, and maintainability.
+
+
+---
+
 # Experiment 3.2: Flask Application – Docker 
 [README.md](./experiment3.2/README.md)

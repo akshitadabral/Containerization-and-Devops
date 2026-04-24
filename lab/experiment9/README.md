@@ -1,5 +1,20 @@
 # Experiment 9 : Ansible
 
+## Aim
+
+To understand and implement infrastructure automation using Ansible by configuring multiple servers through playbooks in an agentless environment.
+
+---
+
+## Objectives
+- To understand the working of Ansible and its architecture
+- To automate server configuration using YAML-based playbooks
+- To manage multiple servers efficiently using an inventory file
+- To implement SSH-based communication without agents
+- To perform real-time configuration using Docker containers as servers
+
+---
+
 ## **Theory**
 
 **Problem Statement:** Managing infrastructure manually across multiple servers leads to configuration drift, inconsistent
@@ -317,3 +332,23 @@ done
 ![](./images/img16.png)
 
 ---
+
+## Observations
+- Ansible successfully connected to multiple servers using SSH
+- Playbooks executed tasks simultaneously on all nodes
+- No agent installation was required on target systems
+- Automation reduced manual effort significantly
+- YAML syntax made playbooks easy to read and write
+
+---
+
+## Result
+
+The experiment was successfully completed. Multiple Docker-based servers were configured using Ansible playbooks, demonstrating efficient, scalable, and automated infrastructure management.
+
+---
+
+## Conclusion
+
+Ansible provides a simple yet powerful way to automate server configuration. Its agentless architecture, ease of use, and scalability make it an ideal tool for managing large infrastructures efficiently. This experiment demonstrated how repetitive administrative tasks can be automated reliably using playbooks.
+

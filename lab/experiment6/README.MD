@@ -1,16 +1,22 @@
 # Experiment 6 : Comparison of Docker Run and Docker Compose
 ## PART A – THEORY
 
-**1. Objective**
+---
 
-To understand the relationship between docker run and Docker Compose, and to
+## Objective
+
+To understand the relationship between Docker run and Docker Compose, and to
 compare their configuration syntax and use cases.
 
-**2. Background Theory**
+---
+
+## Background Theory
 
 **2.1 Docker Run (Imperative Approach)**
 
-The docker run command is used to create and start a container from an image.
+Docker Run is a command-line method used to create and start containers by specifying all configurations manually through flags. Each parameter such as port mapping, volumes, environment variables, and networking must be defined explicitly in the command.
+
+This approach gives fine-grained control but becomes complex when dealing with multiple containers.
 
 It requires explicit flags for:
 
@@ -22,7 +28,7 @@ It requires explicit flags for:
 - Resource limits ( --memory , --cpus )
 - Container name (--name)
 
-This approach is imperative, meaning you specify step-by-step instructions.
+Since instructions are written step-by-step, it follows an imperative approach.
 **Example:**
 ```
 docker run -d \
@@ -33,6 +39,14 @@ docker run -d \
  --restart unless-stopped \
  nginx:alpine
 ```
+
+**2.2 Docker Compose (Declarative Approach)**
+
+Docker Compose defines containers using a YAML configuration file (docker-compose.yml). Instead of writing multiple commands, all configurations are described in a structured format.
+
+Once defined, the application can be started with a single command.
+
+This follows a declarative approach, where the desired state is described rather than step-by-step instructions.
 ---
 
 ## PART B – PRACTICAL TASK
@@ -394,3 +408,16 @@ http://localhost:3000
 ```
 ![](./images/img15.png)
 
+---
+
+## RESULT
+
+The experiment successfully demonstrated both approaches. 
+
+Docker Run was effective for simple, single-container execution, while Docker Compose provided a structured and efficient method for managing multi-container applications.
+
+---
+
+## CONCLUSION
+
+Docker Run is suitable for quick testing and simple deployments, but becomes complex for larger applications. Docker Compose simplifies configuration, improves readability, and enables easier management of multi-container systems, making it more suitable for development and real-world applications.
