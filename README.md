@@ -32,6 +32,8 @@ This repository contains lab and theory work for Containeriazation and Devops.
 
 8. [Experiment 9:  Ansible](./lab/experiment9/README.md)
 9. [Experiment 10: SonarQube - Static Code Analysis](./lab/experiment10/README.md)
+10. [Experiment 11: Orchestration using Docker Compose & Docker Swarm](./lab/experiment11/README.md)
+11. [Experiment 12: Study and Analyse Container Orchestration using Kubernetes](./lab/experiment12/README.md)
 
 ---
 # THEORY
