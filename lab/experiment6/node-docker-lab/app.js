@@ -1,5 +1,5 @@
 const http = require('http');
 
 http.createServer((req, res) => {
-    res.end("Docker Compose Build Lab");
+    res.end("Modified Message - Docker Rebuild Success");
 }).listen(3000);

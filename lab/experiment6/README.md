@@ -408,16 +408,362 @@ http://localhost:3000
 ```
 ![](./images/img15.png)
 
+**7. Modify app.js**
+
+- The app.js file was updated with a new response message:
+
+- **Change**: res.end("Docker Compose Build Lab");
+
+- **To:** 
+res.end("Modified Message - Docker Rebuild Success");
+
+**8. Rebuild container**
+
+- The following command was executed to rebuild and restart the container:
+```
+docker compose up --build -d
+```
+![](./images/img16.png)
+
+
+**9. Verify**
+
+- The updated output was successfully verified in the browser at:
+
+- Open: http://localhost:3000
+
+-  You should see updated message
+![](./images/img17.png)
+
+This demonstrated that whenever source code changes are made, the Docker image must be rebuilt so that containers use the latest version of the application.
+
+## Difference between Image and Build:
+
+- **Image:**
+→ Uses prebuilt image from Docker Hub
+→ Fast but no customization
+
+- **Build:**
+→ Creates custom image using Dockerfile
+→ Allows adding your own code
+
+---
+## TASK 6: Multi-Stage Dockerfile (IMPORTANT + HIGH MARKS)
+
+### Objective
+
+To create a production-ready Node.js application using a Multi-Stage Dockerfile and deploy it using Docker Compose. This experiment demonstrates image optimization, reduced image size, and efficient deployment.
+
+**1. Create new folder**
+```
+mkdir multi-stage-app
+cd multi-stage-app
+```
+
+**2. Create [app.js](./multi-stage-app/app.js)
+**
+A simple Node.js HTTP server was created in app.js
+
+```
+const http = require('http');
+
+http.createServer((req, res) => {
+    res.end("Production Multi-Stage App");
+}).listen(3000);
+```
+
+**3. Multi-stage Dockerfile**
+
+A Multi-Stage Dockerfile was created to optimize the final image.
+```
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+COPY app.js .
+
+# Final smaller image
+FROM node:18-alpine
+
+WORKDIR /app
+COPY --from=builder /app .
+
+EXPOSE 3000
+CMD ["node", "app.js"]
+```
+- The first stage acts as the builder stage.
+- The second stage creates the final lightweight production image.
+- Only required files are copied into the final image.
+
+**4. Create [docker-compose.yml](./multi-stage-app/docker-compose.yml)**
+```
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multi-stage-app
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+    volumes:
+      - .:/app   # dev mode
+  ```
+
+**5. Run**
+```
+docker compose up --build -d
+```
+![](./images/img18.png)
+
+**6. Verify**
+
+```
+http://localhost:3001
+```
+![](./images/img19.png)
+
+### Result
+
+- The Multi-Stage Docker application was successfully created and deployed using Docker Compose.
+
+### Advantages of Multi-Stage Dockerfile
+- Reduces final image size
+- Faster deployment
+- Better security
+- Suitable for production use
+- Cleaner Docker builds
+
 ---
 
-## RESULT
+## Experiment 6 B: Multi-Container Application using Docker Compose (WordPress + Database)**
 
-The experiment successfully demonstrated both approaches. 
+**1. Objective**
 
-Docker Run was effective for simple, single-container execution, while Docker Compose provided a structured and efficient method for managing multi-container applications.
+To deploy a multi-container application using Docker Compose, consisting of:
+WordPress (frontend + PHP)
+MySQL database (backend)
+Also:
+Understand container networking & volumes
+Learn how to scale services
+Compare with Docker Swarm for production deployment
+
+**2. Prerequisites**
+
+- Docker installed
+- Docker Compose (comes with modern Docker)
+- Basic understanding of containers
+
+## STEPS
+
+1. Create [folder](./wp-compose-lab/)
+```
+mkdir wp-compose-lab
+cd wp-compose-lab
+```
+
+2. Create docker-compose.yml
+
+```
+version: '3.9'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: wordpress_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppass
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - db
+    ports:
+      - "8085:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_data:/var/www/html
+
+volumes:
+  db_data:
+  wp_data:
+
+  ```
+
+**3. Run**
+```
+docker compose up -d
+```
+![](./images/img20.png)
+
+**4. Verify**
+```
+docker ps
+```
+![](./images/img21.png)
+
+**5. Open**
+```
+http://localhost:8085
+
+```
+
+The WordPress installation page opened successfully.
+
+![](./images/img22.png)
+
+**6. Check volumes**
+```
+docker volume ls
+
+```
+This confirmed persistent storage creation.
+![](./images/img24.png)
+
+## SCALING TEST
+
+WordPress containers were scaled using:
+```
+docker compose up --scale wordpress=3
+```
+**- Problems Observed**
+
+- Port conflict
+- No load balancing
+
+![](./images/img25.png)
+
+- **Adding Nginx Reverse Proxy**
+
+```
+version: '3.9'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: wordpress_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppass
+    volumes:
+      - db_data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - db
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppass
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_data:/var/www/html
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8085:80"
+    depends_on:
+      - wordpress
+
+volumes:
+  db_data:
+  wp_data:
+  ```
+**1. Then containers were restarted**
+```
+docker compose up --scale wordpress=3 -d
+```
+Now requests passed through Nginx.
+
+![](./images/img26.png)
+
+**2. Access system**
+
+```
+http://localhost:8085
+```
+
+- Now request goes through Nginx
+![](./images/img27.png)
+
+3. Limitations of Docker Compose
+- No built-in load balancing
+- No auto-healing
+- Single host only
+- Not production-ready for scaling
+
+##  Running Same Setup with Docker Swarm
+
+**1. Initialize Swarm**
+```
+docker swarm init
+```
+
+This converted the machine into a Swarm manager node.
+![](./images/img28.png)
+
+**2. Deploy Stack**
+```
+docker stack deploy -c docker-compose.yml wpstack
+```
+![](./images/img29.png)
+
+**3.  Scale Service**
+
+```
+docker service scale wpstack_wordpress=3
+```
+![](./images/img30.png)
+
+
+**4. Verify scaling**
+```
+docker service ps wpstack_wordpress
+```
+![](./images/img31.png)
+
+**7. Benefits of Docker Swarm**
+- Built-in load balancing
+- Automatic container restart (self-healing)
+- Horizontal scaling across nodes
+- Rolling updates without downtime
+- Service abstraction (not individual containers)
+
+**8. Challenges / Limitations of Swarm**
+- Less popular than Kubernetes
+- Limited ecosystem
+- Less flexible scheduling
+- Fewer enterprise features
 
 ---
 
-## CONCLUSION
+### Result
 
-Docker Run is suitable for quick testing and simple deployments, but becomes complex for larger applications. Docker Compose simplifies configuration, improves readability, and enables easier management of multi-container systems, making it more suitable for development and real-world applications.
+The WordPress and MySQL multi-container application was successfully deployed using Docker Compose. Scaling limitations were observed, and Docker Swarm provided a better production-ready orchestration solution.
+
+---
+
+### Conclusion
+
+This experiment demonstrated the deployment of multi-container applications using Docker Compose, use of persistent volumes, container communication through networking, scaling challenges in Compose, and the advantages of Docker Swarm such as load balancing, self-healing, and scalable production deployments.
+
+---
