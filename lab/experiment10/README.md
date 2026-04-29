@@ -54,14 +54,16 @@ sudo apt install maven
 ## STEPS
 ### **1. Start SonarQube Server**
 - **Create Folder**
-```
 
+```
 mkdir sonarqube-lab
+
 cd sonarqube-lab
 ```
 
 ## Create docker-compose.yml
 - [docker-compose.yml](./sonarqube-lab/docker-compose.yml)
+
 ```
 version: '3.8'
 
@@ -104,6 +106,7 @@ volumes:
 networks:
   sonarqube-lab:
     driver: bridge
+
 ```
 
 
